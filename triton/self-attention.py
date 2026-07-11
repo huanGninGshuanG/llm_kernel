@@ -127,18 +127,18 @@ def flash_attention(
     k_head_start = cur_batch * k_batch_stride + cur_head * k_head_stride
     v_head_start = cur_batch * v_batch_stride + cur_head * v_head_stride
     for i in range(0, SEQ_LEN, BLOCK_SIZE_KV):
-        k_row_offs = i * BLOCK_SIZE_KV + tl.arange(0, BLOCK_SIZE_KV)[:, None]
+        k_row_offs = i + tl.arange(0, BLOCK_SIZE_KV)[:, None]
         k = tl.load(k_ptr + k_head_start + k_row_offs * HEAD_DIM + col_offs,
                     mask=(k_row_offs<SEQ_LEN)&(col_offs<HEAD_DIM), other=0.0)
         
-        v_row_offs = i * BLOCK_SIZE_KV + tl.arange(0, BLOCK_SIZE_KV)[:, None]
+        v_row_offs = i + tl.arange(0, BLOCK_SIZE_KV)[:, None]
         v = tl.load(v_ptr + v_head_start + v_row_offs * HEAD_DIM + col_offs,
                     mask=(v_row_offs<SEQ_LEN)&(col_offs<HEAD_DIM), other=0.0)
         
         attention_weight = tl.dot(q, tl.trans(k)) * sm_scale
         
         m_cur = tl.max(attention_weight, axis=-1)
-        p = tl.exp(attention_weight-m_cur)
+        p = tl.exp(attention_weight-m_cur[:, None])
         l_cur = tl.sum(p, axis=-1)
 
         m_new = tl.maximum(m, m_cur)
