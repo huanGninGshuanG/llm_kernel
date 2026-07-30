@@ -1,0 +1,13 @@
+# CUDA 编译产物 / 二进制
+cuda/matmul
+
+# Nsight Compute 报告
+*.ncu-rep
+
+# IDE 配置
+.vscode/
+
+# 编译中间产物
+*.o
+*.obj
+*.exe
