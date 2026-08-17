@@ -1,5 +1,6 @@
 # CUDA 编译产物 / 二进制
 cuda/matmul
+cuda/grouped_gemm
 
 # Nsight Compute 报告
 *.ncu-rep
@@ -11,3 +12,4 @@ cuda/matmul
 *.o
 *.obj
 *.exe
+*.md
